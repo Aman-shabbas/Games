@@ -1,59 +1,18 @@
-function replace(string, index, char) {
-  let replacedString = "";
-  for (let i = 0; i < string.length; i++) {
-    const CurChar = i === index ? char : string[i];
-    replacedString += CurChar;
+// check if the index is editable or not.
+// if editable get a random number and check for if thenumber is present in the row / column or Box.
+// if not present in anywhere replace the random number n that position and go to next position.
+//  if not possible number can be placed in a loation
+// go back to previous cell and change the number there to a different one. and continue.
+
+const string = "531670924624195837890342163819560753452833691793721496307258286281419390458986179";
+// const string = "530070000600195000098000060800060003400803001700020006060000280000419005000080079";
+// const string = "100000000000000000000000000000000000000000000000000000000000000000000000000000009";
+// const string = "173496852954128673862753194285964731719532468436871925328619547591347000000000009";
+
+function wait(time) {
+  for (let time = time * 1000000000; time > 0; time-- ){
+    time--;
   }
-
-  return replacedString;
-}
-
-function isSubstring(string, substring) {
-  if (substring.length === 0) {
-    return false;
-  }
-
-  for (let index = 0; index < string.length; index++) {
-    const stringSegment = slice(string, index, substring.length);
-    if (stringSegment === substring) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function isNumInRange(rngStart, rngEnd, num) {
-  return rngStart <= num && num <= rngEnd;
-}
-
-function randomInRange(rngStart, rngEnd) {
-  const random = Math.floor(Math.random() * 10000);
-  if (isNumInRange(rngStart, rngEnd, random)) {
-    return random;
-  }
-  return randomInRange(rngStart, rngEnd);
-}
-
-function newRandomNumber(rngStart, rngEnd, alreadyTriedNumbers) {
-  let random = randomInRange(rngStart, rngEnd);
-
-  while (isSubstring(alreadyTriedNumbers, "" + random)) {
-    random = randomInRange(rngStart, rngEnd);
-  }
-
-  return random;
-}
-
-function slice(string, index, length) {
-  let segment = "";
-  const endingIndex = length + index;
-
-  for (index; index < endingIndex; index++) {
-    segment += string[index];
-  }
-
-  return segment;
 }
 
 function getColumnFromBord(sudokuString, index) {
@@ -103,43 +62,110 @@ function isInBox(sudokuString, currentIndex, number) {
   return isSubstring(box, "" + number);
 }
 
-function getEmptyString() {
-  let gridStrig = "";
-
-  for (let numberOfElement = 0; numberOfElement < 81; numberOfElement++) {
-    gridStrig += "0";
+function replace(string, index, char) {
+  let replacedString = "";
+  for (let i = 0; i < string.length; i++) {
+    const CurChar = i === index ? char : string[i];
+    replacedString += CurChar;
   }
 
-  return gridStrig;
+  return replacedString;
 }
 
-function fillEmpty(sudokuString, index, alreadyTriedNumbers) {
-  if (alreadyTriedNumbers.length === 9) {
+function slice(string, index, length) {
+  let segment = "";
+  const endingIndex = length + index;
+
+  for (index; index < endingIndex; index++) {
+    segment += string[index];
+  }
+
+  return segment;
+}
+
+function isSubstring(string, substring) {
+  if (substring.length === 0) {
+    return false;
+  }
+
+  for (let index = 0; index < string.length; index++) {
+    const stringSegment = slice(string, index, substring.length);
+    if (stringSegment === substring) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function isNumInRange(rngStart, rngEnd, num) {
+  return rngStart <= num && num <= rngEnd;
+}
+
+function randomInRange(rngStart, rngEnd) {
+  return Math.ceil(Math.random() * 9);
+}
+
+function newRandomNumber(rngStart, rngEnd, alreadyTriedNumbers) {
+  let random = randomInRange(rngStart, rngEnd);
+
+  while (isSubstring(alreadyTriedNumbers, "" + random)) {
+    random = randomInRange(rngStart, rngEnd);
+  }
+
+  return random;
+}
+
+function getUserEnteredIndexes(userInputs) {
+  let userEnterdIndex = ",";
+  for (let index = 0; index < userInputs.length; index++) {
+    if (userInputs[index] !== "0") {
+      userEnterdIndex += index + ",";
+    }
+  }
+
+  return userEnterdIndex;
+}
+
+function isValidNumber (unsolvedSudoku, currentIndex, number) {
+  const notInRow = !isInRow(unsolvedSudoku, currentIndex, number);
+  const notInColumn = !isInColumn(unsolvedSudoku, currentIndex, number);
+  const notInBox = !isInBox(unsolvedSudoku, currentIndex, number);
+
+  return notInRow && notInColumn && notInBox;
+}
+
+function fillBlanks(unsolvedSudoku, currentIndex, alreadyTriedNumbers) {
+  if (currentIndex === string.length) {
+    return "\n";
+  }
+  
+  let random = newRandomNumber(1, 9, alreadyTriedNumbers);
+  alreadyTriedNumbers += random;
+  let isAValidNumber = isValidNumber(unsolvedSudoku, currentIndex, random);
+  
+  while (!isAValidNumber && alreadyTriedNumbers.length < 9) {
+    random = newRandomNumber(1, 9, alreadyTriedNumbers);
+    alreadyTriedNumbers += random;
+    isAValidNumber = isValidNumber(unsolvedSudoku, currentIndex, random);
+  }
+  let temporarySudoku = replace(unsolvedSudoku, currentIndex, "" + random); 
+  let currentCellValue = random;
+  if (isSubstring(userEnterdIndex, "," + currentIndex + ",")) {
+    temporarySudoku = unsolvedSudoku;
+    currentCellValue = unsolvedSudoku[currentIndex];
+  }
+  if (alreadyTriedNumbers.length > 9) {
     return "";
   }
-
-  const number = "" + newRandomNumber(1, 9, alreadyTriedNumbers);
-  alreadyTriedNumbers += number;
-  const notInRow = !isInRow(sudokuString, index, number);
-  const notInColumn = !isInColumn(sudokuString, index, number);
-  const notInBox = !isInBox(sudokuString, index, number);
-
-  if (notInRow && notInColumn && notInBox) {
-    if (index === 80) {
-      return number;
-    }
-    const tempSudoku = replace(sudokuString, index, number);
-    const nextCellValue = fillEmpty(tempSudoku, index + 1, "");
-    if (nextCellValue === "") {
-      return fillEmpty(sudokuString, index, alreadyTriedNumbers);;
-    }
-    return number + nextCellValue;
+  const nextCellValue = fillBlanks(temporarySudoku, currentIndex + 1, "");
+  if (nextCellValue === "") {
+    const returnValue = fillBlanks(unsolvedSudoku, currentIndex, alreadyTriedNumbers);
+    return fillBlanks(unsolvedSudoku, currentIndex, alreadyTriedNumbers);
   }
-
-  return fillEmpty(sudokuString, index, alreadyTriedNumbers);
+  return currentCellValue + nextCellValue;
+  
 }
 
-function solveSudoku(sudokuString) {
-  const solvedSudoku = fillEmpty(sudokuString, 0, "");
-  return solvedSudoku;
-}
+const userEnterdIndex = getUserEnteredIndexes(string);
+console.log(fillBlanks(string, 0, ""));
