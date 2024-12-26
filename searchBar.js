@@ -29,20 +29,9 @@ const appleProducts = [
   "Magic Keyboard",
   "MagSafe Charger",
   "Apple Vision Pro"
-];
+];  
 
-
-function range(rngStart, rngEnd, step) {
-  const steps = [];
-
-  for (let element = rngStart; element < rngEnd; element += step) {
-    steps.push(element);
-  }
-
-  return steps;
-}
-
-const compareLength = function (a, b) {
+const sortByLength = function (a, b) {
   return a.length - b.length;
 }
 
@@ -51,7 +40,7 @@ const getSorter = function (subString) {
     a = a.toLowerCase();
     b = b.toLowerCase();
     if (a.indexOf(subString) === b.indexOf(subString)) {
-      return compareLength(a, b);
+      return sortByLength(a, b);
     }
     return a.indexOf(subString) - b.indexOf(subString);
   }
