@@ -59,30 +59,19 @@ const getCopy = (grid) => {
   return grid.map(row => row.map(cell => cell));
 }
 
-const _solveSudoku = (sudokuGrid, currentPosition, generateRandom) => {
-  if (currentPosition.rowIndex === 9) {
-    return sudokuGrid;
+const subSetOf = (arrayOfObject, curpos) => {
+  return arrayOfObject.some(({ rowIndex, columnIndex }) => {
+    return curpos.rowIndex === rowIndex && curpos.columnIndex === columnIndex;
+  })
+}
+
+const _solveSudoku = (grid, curPos, getRandom, unchangableIndexes) => {
+  if (curPos.rowIndex === 9) {
+    return grid;
   }
-  // console.log(currentPosition.rowIndex, currentPosition.columnIndex);
-  let newRandomNumber = generateRandom();
-  while (!isPossible(sudokuGrid, currentPosition, newRandomNumber) || newRandomNumber === -1) {
-    newRandomNumber = generateRandom();
-    if (newRandomNumber === -1) {
-      return [[0]]
-    }
+  if (subSetOf(unchangableIndexes, curPos)) {
+    // implement bypasing to next line
   }
-  const { rowIndex, columnIndex } = currentPosition;
-  sudokuGrid[rowIndex][columnIndex] = newRandomNumber;
-  // console.log(sudokuGrid.join("\n"));
-  const nextPosition = getNextPosition(currentPosition);
-  const gridToSolve = getCopy(sudokuGrid);
-  // console.log(nextPosition.rowIndex, nextPosition.columnIndex);
-  const solvedSudoku = _solveSudoku(gridToSolve, nextPosition, newRandom());
-  if (solvedSudoku[0][0] === 0) {
-    // console.log("unsolved sudoku found");
-    return _solveSudoku(sudokuGrid, currentPosition, generateRandom);
-  }
-  return solvedSudoku;
 }
 
 const solveSudoku = (grid) => {
