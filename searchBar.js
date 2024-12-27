@@ -55,8 +55,8 @@ const createSearch = function (array) {
 }
 
 const getPaddedString = function (resultArray) {
-  const sizeDifferance = 18 - resultArray.length; 
-  const sizeOfPadding = sizeDifferance <= 0 ? 1: sizeDifferance;
+  const sizeDifference = 18 - resultArray.length; 
+  const sizeOfPadding = sizeDifference <= 0 ? 1 : sizeDifference;
   const resultString = resultArray.join("\n");
   const paddedString = resultString + "\n".repeat(sizeOfPadding);
   return paddedString;
